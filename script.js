@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         name: 'User',
         email: '',
         role: 'Admin',
+        photo: '',
     };
 
     const LOGIN_STORAGE_KEY = 'inv_login_v1';
@@ -442,6 +443,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const displayNameEl = document.getElementById('profileDisplayName');
         const displayMetaEl = document.getElementById('profileDisplayMeta');
 
+        const photoInputEl = document.getElementById('profilePhoto');
+        const photoUploadBtn = document.getElementById('profilePhotoUpload');
+        const photoRemoveBtn = document.getElementById('profilePhotoRemove');
+
         const dotPrimary = document.getElementById('profileDotPrimary');
         const dotBg = document.getElementById('profileDotBg');
         const dotSurface = document.getElementById('profileDotSurface');
@@ -452,6 +457,7 @@ document.addEventListener('DOMContentLoaded', () => {
         hydrateForm(profile);
         renderHeader(profile);
         updateThemeDots();
+        syncPhotoControls(profile);
 
         form.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -470,9 +476,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 name,
                 email,
                 role: role || DEFAULT_PROFILE.role,
+                photo: String(profile?.photo || ''),
             };
             saveProfile(profile);
             renderHeader(profile);
+            syncPhotoControls(profile);
         });
 
         resetBtn?.addEventListener('click', () => {
@@ -481,6 +489,56 @@ document.addEventListener('DOMContentLoaded', () => {
             hideError(errorEl);
             hydrateForm(profile);
             renderHeader(profile);
+            syncPhotoControls(profile);
+        });
+
+        photoUploadBtn?.addEventListener('click', () => {
+            photoInputEl?.click();
+        });
+
+        photoInputEl?.addEventListener('change', async () => {
+            const file = photoInputEl?.files?.[0];
+            if (!file) return;
+
+            const maxBytes = 2 * 1024 * 1024;
+            if (!String(file.type || '').startsWith('image/')) {
+                showError(errorEl, 'File harus berupa gambar (JPG/PNG).');
+                photoInputEl.value = '';
+                return;
+            }
+            if (file.size > maxBytes) {
+                showError(errorEl, 'Ukuran gambar maksimal 2MB.');
+                photoInputEl.value = '';
+                return;
+            }
+
+            try {
+                hideError(errorEl);
+                photoUploadBtn.disabled = true;
+
+                const dataUrl = await imageFileToDataUrl(file, { maxDim: 256, quality: 0.86 });
+                if (!dataUrl) throw new Error('Gagal memproses gambar.');
+                if (dataUrl.length > 1_200_000) {
+                    throw new Error('Gambar terlalu besar. Coba pilih gambar lain.');
+                }
+
+                profile = { ...profile, photo: dataUrl };
+                saveProfile(profile);
+                renderHeader(profile);
+                syncPhotoControls(profile);
+            } catch (err) {
+                showError(errorEl, err?.message || 'Gagal mengupload foto.');
+            } finally {
+                if (photoUploadBtn) photoUploadBtn.disabled = false;
+                if (photoInputEl) photoInputEl.value = '';
+            }
+        });
+
+        photoRemoveBtn?.addEventListener('click', () => {
+            profile = { ...profile, photo: '' };
+            saveProfile(profile);
+            renderHeader(profile);
+            syncPhotoControls(profile);
         });
 
         function hydrateForm(p) {
@@ -496,7 +554,65 @@ document.addEventListener('DOMContentLoaded', () => {
                 const emailText = String(p?.email || '').trim();
                 displayMetaEl.textContent = emailText ? `${roleText} • ${emailText}` : roleText;
             }
-            if (avatarEl) avatarEl.textContent = getInitials(String(p?.name || DEFAULT_PROFILE.name));
+            if (avatarEl) {
+                avatarEl.textContent = getInitials(String(p?.name || DEFAULT_PROFILE.name));
+
+                const photo = String(p?.photo || '').trim();
+                if (photo) {
+                    avatarEl.classList.add('has-photo');
+                    avatarEl.classList.remove('placeholder');
+                    avatarEl.style.backgroundImage = `url("${photo}")`;
+                } else {
+                    avatarEl.classList.remove('has-photo');
+                    avatarEl.classList.add('placeholder');
+                    avatarEl.style.backgroundImage = '';
+                }
+            }
+        }
+
+        function syncPhotoControls(p) {
+            const has = Boolean(String(p?.photo || '').trim());
+            if (photoRemoveBtn) photoRemoveBtn.disabled = !has;
+        }
+
+        function imageFileToDataUrl(file, { maxDim, quality }) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onerror = () => reject(new Error('Gagal membaca file gambar.'));
+                reader.onload = () => {
+                    const src = String(reader.result || '');
+                    const img = new Image();
+                    img.onerror = () => reject(new Error('Gambar tidak valid.'));
+                    img.onload = () => {
+                        const w = Number(img.naturalWidth || img.width || 0);
+                        const h = Number(img.naturalHeight || img.height || 0);
+                        if (!w || !h) {
+                            reject(new Error('Gambar tidak valid.'));
+                            return;
+                        }
+
+                        const scale = Math.min(1, (Number(maxDim) || 256) / Math.max(w, h));
+                        const tw = Math.max(1, Math.round(w * scale));
+                        const th = Math.max(1, Math.round(h * scale));
+
+                        const canvas = document.createElement('canvas');
+                        canvas.width = tw;
+                        canvas.height = th;
+
+                        const ctx = canvas.getContext('2d', { alpha: false });
+                        if (!ctx) {
+                            reject(new Error('Browser tidak mendukung canvas.'));
+                            return;
+                        }
+
+                        ctx.drawImage(img, 0, 0, tw, th);
+                        const q = Math.min(0.95, Math.max(0.5, Number(quality) || 0.86));
+                        resolve(canvas.toDataURL('image/jpeg', q));
+                    };
+                    img.src = src;
+                };
+                reader.readAsDataURL(file);
+            });
         }
 
         function updateThemeDots() {
@@ -517,6 +633,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 name: String(parsed?.name || DEFAULT_PROFILE.name),
                 email: String(parsed?.email || DEFAULT_PROFILE.email),
                 role: String(parsed?.role || DEFAULT_PROFILE.role),
+                photo: String(parsed?.photo || DEFAULT_PROFILE.photo || ''),
             };
         } catch {
             return { ...DEFAULT_PROFILE };
@@ -562,6 +679,264 @@ document.addEventListener('DOMContentLoaded', () => {
         kpiRevenue.textContent = formatCurrency(totalRevenue);
 
         initThemeControls();
+        initDashboardCharts({ totalSales });
+    }
+
+    function initDashboardCharts({ totalSales }) {
+        const salesCanvas = document.getElementById('chartSales7');
+        const stockCanvas = document.getElementById('chartStock');
+        if (!(salesCanvas instanceof HTMLCanvasElement) || !(stockCanvas instanceof HTMLCanvasElement)) return;
+
+        const getThemeColors = () => {
+            const styles = getComputedStyle(document.documentElement);
+            const primary = styles.getPropertyValue('--primary').trim() || '#2563eb';
+            const text = styles.getPropertyValue('--text').trim() || '#0f172a';
+            const muted = styles.getPropertyValue('--muted').trim() || '#64748b';
+            const border = styles.getPropertyValue('--border').trim() || '#e2e8f0';
+            const surface = styles.getPropertyValue('--surface').trim() || '#ffffff';
+            return { primary, text, muted, border, surface };
+        };
+
+        const dayLabels = last7DayLabels();
+        const salesSeries = buildSalesSeries(totalSales, dayLabels.length);
+        const stockSeries = buildStockSeries(state.products);
+
+        const render = () => {
+            const colors = getThemeColors();
+            drawLineChart(salesCanvas, {
+                labels: dayLabels,
+                values: salesSeries,
+                colors,
+            });
+            drawBarChart(stockCanvas, {
+                labels: stockSeries.labels,
+                values: stockSeries.values,
+                colors,
+            });
+        };
+
+        // initial render
+        render();
+
+        // repaint on resize (debounced)
+        let resizeTimer = 0;
+        window.addEventListener('resize', () => {
+            window.clearTimeout(resizeTimer);
+            resizeTimer = window.setTimeout(render, 120);
+        }, { passive: true });
+
+        // repaint on theme change (dark/custom changes data-theme or inline style vars)
+        const mo = new MutationObserver(() => render());
+        mo.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['data-theme', 'style'],
+        });
+
+        function last7DayLabels() {
+            const fmt = new Intl.DateTimeFormat('id-ID', { weekday: 'short' });
+            const out = [];
+            const d = new Date();
+            for (let i = 6; i >= 0; i--) {
+                const dd = new Date(d);
+                dd.setDate(d.getDate() - i);
+                out.push(fmt.format(dd));
+            }
+            return out;
+        }
+
+        function buildSalesSeries(total, n) {
+            const base = Math.max(1, Math.round((Number(total) || 0) / Math.max(1, n)));
+            const seed = (state.products.length * 97) + (new Date().getDate() * 13);
+            const vals = [];
+            for (let i = 0; i < n; i++) {
+                const wiggle = pseudoRand01(seed + i * 31) - 0.5; // [-0.5, 0.5]
+                const v = Math.max(0, Math.round(base * (1 + wiggle * 0.55)));
+                vals.push(v);
+            }
+            return vals;
+        }
+
+        function buildStockSeries(products) {
+            const top = [...(products || [])]
+                .map(p => ({ name: String(p.name || 'Produk'), stock: Number(p.stock) || 0 }))
+                .sort((a, b) => b.stock - a.stock)
+                .slice(0, 5);
+
+            const labels = top.length ? top.map(x => x.name) : ['Produk A', 'Produk B', 'Produk C'];
+            const values = top.length ? top.map(x => x.stock) : [20, 12, 8];
+            return { labels, values };
+        }
+
+        function pseudoRand01(x) {
+            // deterministic pseudo random [0..1)
+            const s = Math.sin(x) * 10000;
+            return s - Math.floor(s);
+        }
+
+        function setupCanvas(canvas) {
+            const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+            const rect = canvas.getBoundingClientRect();
+            const cssW = Math.max(1, Math.floor(rect.width));
+            const cssH = Math.max(1, Math.floor(rect.height || 220));
+            const pxW = Math.floor(cssW * dpr);
+            const pxH = Math.floor(cssH * dpr);
+            if (canvas.width !== pxW || canvas.height !== pxH) {
+                canvas.width = pxW;
+                canvas.height = pxH;
+            }
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return null;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            return { ctx, w: cssW, h: cssH };
+        }
+
+        function drawLineChart(canvas, { labels, values, colors }) {
+            const s = setupCanvas(canvas);
+            if (!s) return;
+            const { ctx, w, h } = s;
+            ctx.clearRect(0, 0, w, h);
+
+            const padL = 36;
+            const padR = 10;
+            const padT = 12;
+            const padB = 26;
+            const cw = Math.max(1, w - padL - padR);
+            const ch = Math.max(1, h - padT - padB);
+
+            const maxV = Math.max(1, ...values.map(v => Number(v) || 0));
+            const minV = Math.min(...values.map(v => Number(v) || 0));
+            const span = Math.max(1, maxV - minV);
+
+            const xAt = (i) => padL + (cw * (values.length === 1 ? 0 : (i / (values.length - 1))));
+            const yAt = (v) => padT + ch - (ch * ((v - minV) / span));
+
+            // grid
+            ctx.strokeStyle = hexToRgba(colors.border, 0.7) || 'rgba(148,163,184,0.35)';
+            ctx.lineWidth = 1;
+            for (let k = 0; k <= 3; k++) {
+                const y = padT + (ch * (k / 3));
+                ctx.beginPath();
+                ctx.moveTo(padL, y);
+                ctx.lineTo(padL + cw, y);
+                ctx.stroke();
+            }
+
+            // area fill
+            const grad = ctx.createLinearGradient(0, padT, 0, padT + ch);
+            grad.addColorStop(0, hexToRgba(colors.primary, 0.22) || 'rgba(37,99,235,0.18)');
+            grad.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.moveTo(xAt(0), yAt(values[0]));
+            for (let i = 1; i < values.length; i++) ctx.lineTo(xAt(i), yAt(values[i]));
+            ctx.lineTo(xAt(values.length - 1), padT + ch);
+            ctx.lineTo(xAt(0), padT + ch);
+            ctx.closePath();
+            ctx.fill();
+
+            // line
+            ctx.strokeStyle = colors.primary;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(xAt(0), yAt(values[0]));
+            for (let i = 1; i < values.length; i++) ctx.lineTo(xAt(i), yAt(values[i]));
+            ctx.stroke();
+
+            // points
+            for (let i = 0; i < values.length; i++) {
+                ctx.fillStyle = colors.surface;
+                ctx.beginPath();
+                ctx.arc(xAt(i), yAt(values[i]), 3.5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = colors.primary;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            // x labels
+            ctx.fillStyle = colors.muted;
+            ctx.font = '12px system-ui, -apple-system, Segoe UI, Roboto, Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'alphabetic';
+            for (let i = 0; i < labels.length; i++) {
+                ctx.fillText(String(labels[i] || ''), xAt(i), h - 8);
+            }
+
+            // y max label
+            ctx.textAlign = 'left';
+            ctx.fillText(String(maxV), 10, padT + 10);
+        }
+
+        function drawBarChart(canvas, { labels, values, colors }) {
+            const s = setupCanvas(canvas);
+            if (!s) return;
+            const { ctx, w, h } = s;
+            ctx.clearRect(0, 0, w, h);
+
+            const padL = 10;
+            const padR = 10;
+            const padT = 12;
+            const padB = 58;
+            const cw = Math.max(1, w - padL - padR);
+            const ch = Math.max(1, h - padT - padB);
+
+            const maxV = Math.max(1, ...values.map(v => Number(v) || 0));
+            const n = Math.max(1, values.length);
+            const gap = 10;
+            const barW = Math.max(10, Math.floor((cw - gap * (n - 1)) / n));
+
+            // grid baseline
+            ctx.strokeStyle = hexToRgba(colors.border, 0.7) || 'rgba(148,163,184,0.35)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(padL, padT + ch);
+            ctx.lineTo(padL + cw, padT + ch);
+            ctx.stroke();
+
+            for (let i = 0; i < n; i++) {
+                const v = Number(values[i]) || 0;
+                const bh = Math.round((v / maxV) * ch);
+                const x = padL + i * (barW + gap);
+                const y = padT + ch - bh;
+
+                const r = 10;
+                ctx.fillStyle = hexToRgba(colors.primary, 0.22) || 'rgba(37,99,235,0.18)';
+                roundRect(ctx, x, y, barW, bh, r);
+                ctx.fill();
+
+                ctx.strokeStyle = hexToRgba(colors.primary, 0.7) || colors.primary;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // value
+                ctx.fillStyle = colors.muted;
+                ctx.font = '12px system-ui, -apple-system, Segoe UI, Roboto, Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(String(v), x + barW / 2, y - 6);
+            }
+
+            // labels (wrap-ish)
+            ctx.fillStyle = colors.muted;
+            ctx.font = '12px system-ui, -apple-system, Segoe UI, Roboto, Arial';
+            ctx.textAlign = 'center';
+            for (let i = 0; i < n; i++) {
+                const x = padL + i * (barW + gap) + barW / 2;
+                const label = String(labels[i] || '');
+                const short = label.length > 14 ? `${label.slice(0, 12)}…` : label;
+                ctx.fillText(short, x, h - 34);
+            }
+        }
+
+        function roundRect(ctx, x, y, w, h, r) {
+            const rr = Math.max(0, Math.min(r, Math.min(w, h) / 2));
+            ctx.beginPath();
+            ctx.moveTo(x + rr, y);
+            ctx.arcTo(x + w, y, x + w, y + h, rr);
+            ctx.arcTo(x + w, y + h, x, y + h, rr);
+            ctx.arcTo(x, y + h, x, y, rr);
+            ctx.arcTo(x, y, x + w, y, rr);
+            ctx.closePath();
+        }
     }
 
     function initProducts() {

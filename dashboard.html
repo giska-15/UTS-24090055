@@ -46,6 +46,34 @@
       </div>
     </section>
 
+    <section class="grid cols-2" style="margin-top:14px" aria-label="Charts">
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2 class="h2">Sales (7 Hari)</h2>
+            <p class="muted">Grafik sederhana untuk tampilan ringkas.</p>
+          </div>
+          <div class="chip"><span class="dot" aria-hidden="true" style="background:var(--primary)"></span>Sales</div>
+        </div>
+        <div class="chart-wrap" style="margin-top:12px">
+          <canvas id="chartSales7" class="chart-canvas" height="220" aria-label="Grafik sales 7 hari" role="img"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2 class="h2">Stok Produk</h2>
+            <p class="muted">Top 5 berdasarkan stok (dari halaman Produk).</p>
+          </div>
+          <div class="chip"><span class="dot" aria-hidden="true" style="background:var(--primary)"></span>Stock</div>
+        </div>
+        <div class="chart-wrap" style="margin-top:12px">
+          <canvas id="chartStock" class="chart-canvas" height="220" aria-label="Grafik stok produk" role="img"></canvas>
+        </div>
+      </div>
+    </section>
+
     <section class="card" style="margin-top:14px" aria-label="Tema">
       <div class="card-head">
         <div>

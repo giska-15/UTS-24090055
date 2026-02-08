@@ -33,12 +33,19 @@
     <section class="grid cols-2" aria-label="Profile">
       <div class="card">
         <div class="profile-head">
-          <div id="profileAvatar" class="avatar" aria-hidden="true">U</div>
+          <div id="profileAvatar" class="avatar" aria-hidden="true"></div>
           <div>
             <div id="profileDisplayName" class="profile-name">User</div>
             <div id="profileDisplayMeta" class="muted">-</div>
           </div>
         </div>
+
+        <input id="profilePhoto" class="sr-only" type="file" accept="image/*" />
+        <div class="actions" style="margin-top:12px">
+          <button id="profilePhotoUpload" class="btn" type="button">Upload Foto</button>
+          <button id="profilePhotoRemove" class="btn danger" type="button">Hapus Foto</button>
+        </div>
+        <p id="profilePhotoHelp" class="hint">Maks 2MB. Disimpan di browser (localStorage).</p>
 
         <div class="profile-stats" aria-label="Ringkasan">
           <div class="chip"><span class="dot" id="profileDotPrimary" aria-hidden="true"></span>Primary</div>
