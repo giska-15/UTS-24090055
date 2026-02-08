@@ -38,7 +38,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (page === 'profile') initProfile();
 
     function initTheme() {
-        const theme = loadTheme();
+        // emergency reset if user picked unreadable colors
+        if (new URLSearchParams(window.location.search).get('resetTheme') === '1') {
+            try {
+                localStorage.removeItem(THEME_STORAGE_KEY);
+            } catch {
+                // ignore
+            }
+        }
+
+        const theme = sanitizeTheme(loadTheme());
         applyTheme(theme, { persist: false });
     }
 
@@ -206,7 +215,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function applyTheme(theme, { persist }) {
-        const mode = theme?.mode || 'light';
+        const safeTheme = sanitizeTheme(theme);
+        const mode = safeTheme?.mode || 'light';
         const root = document.documentElement;
 
         if (mode === 'dark') root.setAttribute('data-theme', 'dark');
@@ -215,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
         clearCustomThemeVars();
 
         if (mode === 'custom') {
-            const custom = { ...DEFAULT_THEME.custom, ...(theme?.custom || {}) };
+            const custom = { ...DEFAULT_THEME.custom, ...(safeTheme?.custom || {}) };
             root.style.setProperty('--primary', custom.primary);
             root.style.setProperty('--primary-hover', adjustHex(custom.primary, -18));
             root.style.setProperty('--bg', custom.bg);
@@ -233,8 +243,70 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (persist) saveTheme({
             mode,
-            custom: { ...DEFAULT_THEME.custom, ...(theme?.custom || {}) },
+            custom: { ...DEFAULT_THEME.custom, ...(safeTheme?.custom || {}) },
         });
+    }
+
+    function sanitizeTheme(theme) {
+        const mode = ['light', 'dark', 'custom'].includes(theme?.mode) ? theme.mode : DEFAULT_THEME.mode;
+        const custom = {
+            ...DEFAULT_THEME.custom,
+            ...(theme?.custom || {}),
+        };
+
+        const safe = {
+            mode,
+            custom: {
+                primary: normalizeHex(custom.primary) || DEFAULT_THEME.custom.primary,
+                bg: normalizeHex(custom.bg) || DEFAULT_THEME.custom.bg,
+                surface: normalizeHex(custom.surface) || DEFAULT_THEME.custom.surface,
+                text: normalizeHex(custom.text) || DEFAULT_THEME.custom.text,
+            },
+        };
+
+        if (safe.mode === 'custom') {
+            const ratio = contrastRatio(safe.custom.text, safe.custom.bg);
+            if (!Number.isFinite(ratio) || ratio < 2.6) {
+                const bgIsLight = isLightHex(safe.custom.bg);
+                safe.custom.text = bgIsLight ? '#0f172a' : '#e5e7eb';
+            }
+        }
+
+        return safe;
+    }
+
+    function isLightHex(hex) {
+        const rgb = hexToRgb(hex);
+        if (!rgb) return true;
+        return relativeLuminance(rgb) > 0.55;
+    }
+
+    function contrastRatio(fgHex, bgHex) {
+        const fg = hexToRgb(fgHex);
+        const bg = hexToRgb(bgHex);
+        if (!fg || !bg) return NaN;
+        const l1 = relativeLuminance(fg);
+        const l2 = relativeLuminance(bg);
+        const lighter = Math.max(l1, l2);
+        const darker = Math.min(l1, l2);
+        return (lighter + 0.05) / (darker + 0.05);
+    }
+
+    function hexToRgb(hex) {
+        const h = normalizeHex(hex);
+        if (!h) return null;
+        const r = parseInt(h.slice(1, 3), 16);
+        const g = parseInt(h.slice(3, 5), 16);
+        const b = parseInt(h.slice(5, 7), 16);
+        if (![r, g, b].every(Number.isFinite)) return null;
+        return { r, g, b };
+    }
+
+    function relativeLuminance({ r, g, b }) {
+        const srgb = [r, g, b].map(v => v / 255).map(v => (
+            v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)
+        ));
+        return 0.2126 * srgb[0] + 0.7152 * srgb[1] + 0.0722 * srgb[2];
     }
 
     function clearCustomThemeVars() {
