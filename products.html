@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Produk - Enterprise Inventory</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="products">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="dashboard.html" aria-label="Dashboard">
+        <img src="assets/images/logo.svg" alt="Logo" />
+        <strong>Enterprise Inventory</strong>
+      </a>
+      <nav class="nav" aria-label="Navigation">
+        <a href="dashboard.html">Dashboard</a>
+        <a class="active" href="products.html">Produk</a>
+        <a href="profile.html">Profile</a>
+        <a href="index.html">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="page-title">
+      <div>
+        <h1 class="h1">Produk</h1>
+        <p class="muted">Kelola daftar produk (tersimpan di browser).</p>
+      </div>
+      <button id="btnAddProduct" class="btn primary" type="button">Tambah Produk</button>
+    </div>
+
+    <section class="table-wrap" aria-label="Tabel Produk">
+      <table>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Photo</th>
+            <th>Product Name</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="productsTableBody"></tbody>
+      </table>
+    </section>
+
+    <noscript>
+      <p class="hint">Aktifkan JavaScript untuk menampilkan data produk.</p>
+    </noscript>
+  </main>
+
+  <!-- Modal: Add/Edit Product -->
+  <div id="productModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="productModalTitle">
+    <div class="modal-card card">
+      <div class="modal-header">
+        <h2 id="productModalTitle" class="h2">Tambah Produk</h2>
+        <button id="productModalClose" class="icon-btn" type="button" aria-label="Tutup">✕</button>
+      </div>
+
+      <form id="productForm" class="stack" novalidate>
+        <div class="field">
+          <label for="productName">Nama Produk</label>
+          <input id="productName" name="name" type="text" placeholder="Contoh: Kopi Gayo" required />
+        </div>
+
+        <div class="grid cols-2">
+          <div class="field">
+            <label for="productPrice">Harga</label>
+            <input id="productPrice" name="price" type="number" min="0" step="1" placeholder="25000" required />
+          </div>
+          <div class="field">
+            <label for="productStock">Stok</label>
+            <input id="productStock" name="stock" type="number" min="0" step="1" placeholder="50" required />
+          </div>
+        </div>
+
+        <p id="productFormError" class="error" role="alert"></p>
+
+        <div class="actions" style="justify-content:flex-end">
+          <button class="btn" type="button" id="productCancel">Batal</button>
+          <button class="btn primary" type="submit" id="productSave">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login - YesMart</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="login">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="index.html" aria-label="Home">
+        <img src="assets/images/logo.svg" alt="Logo" />
+        <strong>YesMart</strong>
+      </a>
+      <nav class="nav" aria-label="Navigation">
+        <a class="active" href="index.html">Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card card-animate form" aria-label="Login">
+      <h1 class="h1">Masuk</h1>
+      <p class="muted">Silakan masuk untuk mengakses dashboard.</p>
+
+      <form id="loginForm" class="stack" novalidate>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="username" placeholder="nama@contoh.com" required />
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" placeholder="••••••••" required />
+        </div>
+
+        <p id="errorMessage" class="error" role="alert"></p>
+
+        <div class="actions">
+          <button class="btn primary" type="submit">Masuk</button>
+          <a class="btn" href="products.html">Produk</a>
+        </div>
+
+        <p class="hint">Gunakan email dengan format yang valid.</p>
+      </form>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

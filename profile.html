@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Profile - Enterprise Inventory</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="profile">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="dashboard.html" aria-label="Dashboard">
+        <img src="assets/images/logo.svg" alt="Logo" />
+        <strong>Enterprise Inventory</strong>
+      </a>
+      <nav class="nav" aria-label="Navigation">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="products.html">Produk</a>
+        <a class="active" href="profile.html">Profile</a>
+        <a href="index.html">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="page-title">
+      <div>
+        <h1 class="h1">Profile</h1>
+        <p class="muted">Atur data profil yang disimpan di browser.</p>
+      </div>
+    </div>
+
+    <section class="grid cols-2" aria-label="Profile">
+      <div class="card">
+        <div class="profile-head">
+          <div id="profileAvatar" class="avatar" aria-hidden="true">U</div>
+          <div>
+            <div id="profileDisplayName" class="profile-name">User</div>
+            <div id="profileDisplayMeta" class="muted">-</div>
+          </div>
+        </div>
+
+        <div class="profile-stats" aria-label="Ringkasan">
+          <div class="chip"><span class="dot" id="profileDotPrimary" aria-hidden="true"></span>Primary</div>
+          <div class="chip"><span class="dot" id="profileDotBg" aria-hidden="true"></span>BG</div>
+          <div class="chip"><span class="dot" id="profileDotSurface" aria-hidden="true"></span>Surface</div>
+        </div>
+
+        <p class="hint">Tip: Tema yang kamu set di Dashboard tetap berlaku di sini.</p>
+      </div>
+
+      <div class="card">
+        <h2 class="h2">Edit Profil</h2>
+        <form id="profileForm" class="stack" style="margin-top:12px" novalidate>
+          <div class="field">
+            <label for="profileName">Nama</label>
+            <input id="profileName" name="name" type="text" placeholder="Nama kamu" required />
+          </div>
+
+          <div class="field">
+            <label for="profileEmail">Email</label>
+            <input id="profileEmail" name="email" type="email" placeholder="nama@contoh.com" required />
+          </div>
+
+          <div class="field">
+            <label for="profileRole">Role</label>
+            <input id="profileRole" name="role" type="text" placeholder="Contoh: Admin" />
+          </div>
+
+          <p id="profileError" class="error" role="alert"></p>
+
+          <div class="actions" style="justify-content:flex-end">
+            <button id="profileReset" class="btn" type="button">Reset</button>
+            <button class="btn primary" type="submit">Simpan</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

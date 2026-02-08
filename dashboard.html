@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard - Enterprise Inventory</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="dashboard">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="dashboard.html" aria-label="Dashboard">
+        <img src="assets/images/logo.svg" alt="Logo" />
+        <strong>Enterprise Inventory</strong>
+      </a>
+      <nav class="nav" aria-label="Navigation">
+        <a class="active" href="dashboard.html">Dashboard</a>
+        <a href="products.html">Produk</a>
+        <a href="profile.html">Profile</a>
+        <a href="index.html">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="page-title">
+      <div>
+        <h1 class="h1">Dashboard</h1>
+        <p class="muted">Ringkasan singkat aktivitas.</p>
+      </div>
+      <a class="btn primary" href="products.html">Kelola Produk</a>
+    </div>
+
+    <section class="grid cols-3" aria-label="Ringkasan">
+      <div class="card card-animate kpi">
+        <div class="label">Total Produk</div>
+        <div id="kpiProducts" class="value">-</div>
+      </div>
+      <div class="card card-animate kpi">
+        <div class="label">Total Sales</div>
+        <div id="kpiSales" class="value">-</div>
+      </div>
+      <div class="card card-animate kpi">
+        <div class="label">Revenue</div>
+        <div id="kpiRevenue" class="value">-</div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px" aria-label="Tema">
+      <div class="card-head">
+        <div>
+          <h2 class="h2">Tema</h2>
+          <p class="muted">Ganti tampilan, otomatis tersimpan di browser.</p>
+        </div>
+        <button id="themeReset" class="btn small" type="button">Reset</button>
+      </div>
+
+      <div class="grid cols-2" style="margin-top:12px">
+        <div class="field">
+          <label for="themeMode">Mode</label>
+          <select id="themeMode" name="themeMode">
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+            <option value="custom">Custom</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Preview</label>
+          <div class="theme-preview" aria-label="Preview warna">
+            <span class="chip"><span id="themeDotBg" class="dot" aria-hidden="true"></span>BG</span>
+            <span class="chip"><span id="themeDotSurface" class="dot" aria-hidden="true"></span>Surface</span>
+            <span class="chip"><span id="themeDotPrimary" class="dot" aria-hidden="true"></span>Primary</span>
+            <span class="chip"><span id="themeDotText" class="dot" aria-hidden="true"></span>Text</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="themeCustomFields" style="margin-top:12px">
+        <div class="grid cols-2">
+          <div class="field">
+            <label for="themePrimary">Primary</label>
+            <div class="color-row">
+              <input id="themePrimary" type="color" value="#2563eb" />
+              <input id="themePrimaryHex" type="text" value="#2563eb" maxlength="7" inputmode="text" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="themeBg">Background</label>
+            <div class="color-row">
+              <input id="themeBg" type="color" value="#f8fafc" />
+              <input id="themeBgHex" type="text" value="#f8fafc" maxlength="7" inputmode="text" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="themeSurface">Surface</label>
+            <div class="color-row">
+              <input id="themeSurface" type="color" value="#ffffff" />
+              <input id="themeSurfaceHex" type="text" value="#ffffff" maxlength="7" inputmode="text" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="themeText">Text</label>
+            <div class="color-row">
+              <input id="themeText" type="color" value="#0f172a" />
+              <input id="themeTextHex" type="text" value="#0f172a" maxlength="7" inputmode="text" />
+            </div>
+          </div>
+        </div>
+        <p class="hint" style="margin:12px 0 0">Tips: pilih mode <strong>Custom</strong> untuk edit warna.</p>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px" aria-label="Catatan">
+      <p class="muted">Total produk mengikuti data di halaman Produk.</p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

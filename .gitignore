@@ -1,0 +1,22 @@
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Logs
+*.log
+
+# Python (if you use a local server/venv)
+.venv/
+__pycache__/
+*.py[cod]
+
+# Node (if ever used)
+node_modules/
+
+# Secrets
+.env
+
+# Build artifacts
+/dist/
+/build/

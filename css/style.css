@@ -1,0 +1,249 @@
+/* --- 1. Global Setup & Variabel Warna (Profesional) --- */
+:root {
+    --primary-blue: #4A80F0;
+    --primary-purple: #6D28D9; /* Untuk link 'Forgot Password' */
+    --text-dark: #1F2937;
+    --text-light: #6B7280;
+    --border-color: #DDE2E7;
+    --bg-light: #F4F7FA;
+    --bg-white: #FFFFFF;
+    --font-family: 'Poppins', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+/* --- 2. Layout Form Login (Sesuai Gambar) --- */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+.login-form {
+    background: var(--bg-white);
+    max-width: 440px;
+    width: 100%;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    
+    /* Animasi Fade-in saat load */
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-form h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem; /* Memberi jarak lebih */
+    text-align: center;
+}
+
+/* --- 3. Styling Input (Modern & Animatif) --- */
+.input-group {
+    margin-bottom: 1.25rem;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-dark);
+}
+
+.input-group input {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: var(--font-family);
+    
+    /* Transisi Halus (Animasi) */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(74, 128, 240, 0.2);
+}
+
+.forgot-password {
+    display: block;
+    text-align: right;
+    font-size: 0.9rem;
+    color: var(--primary-purple);
+    text-decoration: none;
+    font-weight: 500;
+    margin-top: -0.5rem; /* Tarik lebih dekat ke atas */
+    margin-bottom: 1.5rem;
+    transition: color 0.3s ease;
+}
+
+.forgot-password:hover {
+    color: var(--text-dark);
+}
+
+/* --- 4. Styling Tombol (Modern & Animatif) --- */
+.btn {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: var(--font-family);
+    cursor: pointer;
+    
+    /* Transisi Halus (Animasi) */
+    transition: all 0.3s ease;
+}
+
+.btn-login {
+    background-color: var(--primary-blue);
+    color: white;
+    margin-bottom: 1.5rem;
+}
+
+.btn-login:hover {
+    background-color: #3a6cd9; /* Sedikit lebih gelap */
+    transform: translateY(-2px); /* Efek 'terangkat' */
+    box-shadow: 0 4px 10px rgba(74, 128, 240, 0.3);
+}
+
+.btn-login:active {
+    transform: scale(0.98); /* Efek 'ditekan' */
+}
+
+/* --- 5. Styling "Or" dan Login Sosial --- */
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.divider span {
+    padding: 0 1rem;
+    font-size: 0.9rem;
+}
+
+.social-login {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.btn-social {
+    background: var(--bg-white);
+    color: var(--text-dark);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-social:hover {
+    background-color: #f9fafb; /* Sedikit abu-abu */
+}
+
+.btn-social img {
+    width: 16px;
+    height: 16px;
+}
+
+/* --- 6. Link Sign Up & Error --- */
+.signup-link {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+.signup-link a {
+    color: var(--primary-purple);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.error-text {
+    color: #E74C3C;
+    background-color: #fdeded;
+    border: 1px
+ 
+solid #f5c6cb;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+/* --- Toasts, Modals, Buttons and polish --- */
+.toast-container { position: fixed; right: 20px; bottom: 24px; display:flex; flex-direction:column; gap:12px; z-index:1200; }
+.toast { min-width:220px; max-width:360px; padding:10px 12px; border-radius:10px; color:white; display:flex; align-items:center; gap:10px; box-shadow: 0 10px 30px rgba(2,6,23,0.12); transform:translateY(8px) scale(.98); opacity:0; animation: toastIn 240ms cubic-bezier(.2,.9,.2,1) forwards; }
+.toast.success { background: linear-gradient(90deg,#16a34a,#059669); }
+.toast.error { background: linear-gradient(90deg,#dc2626,#ef4444); }
+.toast .toast-msg { flex:1; font-size:14px; }
+.toast .toast-close { background:transparent; border:none; color:inherit; font-size:14px; cursor:pointer; }
+
+@keyframes toastIn { to { transform:translateY(0) scale(1); opacity:1; } }
+
+.modal-overlay { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background: rgba(2,6,23,0.45); z-index:1300; }
+.confirm-modal, .dialog-modal { background:var(--bg-white); padding:18px; border-radius:12px; width:100%; max-width:480px; box-shadow:0 20px 40px rgba(2,6,23,0.12); }
+.confirm-modal h3, .dialog-modal h3 { margin:0 0 8px 0; }
+.confirm-text { color:var(--text-dark); }
+.confirm-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:12px; }
+.btn-secondary { background:#f3f4f6; color:var(--text-dark); border-radius:8px; padding:8px 12px; border:none; cursor:pointer; }
+.btn-danger { background:#ef4444; color:white; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; }
+.btn-primary-modal { background:var(--primary-blue); color:white; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; }
+
+/* small visual utilities */
+.fade-in { animation: fadeInUp 420ms ease forwards; }
+.shake { animation: shake 420ms cubic-bezier(.36,.07,.19,.97) both; }
+@keyframes fadeInUp { from { opacity:0; transform: translateY(8px);} to { opacity:1; transform: translateY(0);} }
+@keyframes shake { 10%,90%{transform:translateX(-1px)} 20%,80%{transform:translateX(2px)} 30%,50%,70%{transform:translateX(-4px)} 40%,60%{transform:translateX(4px)} }
+
+.btn-action{ padding:6px 10px; border-radius:8px; border:none; cursor:pointer; }
+.btn-edit{ background:#FBBF24; color:white; }
+.btn-delete{ background:#EF4444; color:white; }
+
+/* improve table visuals */
+table { width:100%; border-collapse:collapse; background:transparent; }
+thead th { background:transparent; color:var(--text-light); font-size:12px; text-transform:uppercase; padding:12px 16px; }
+td { padding:12px 16px; border-bottom:1px solid var(--border-color); background:var(--bg-white); }
+
+/* responsive tweaks */
+@media (max-width:900px){ .login-container{flex-direction:column;padding:18px;} .login-card{width:100%;} }
