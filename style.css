@@ -216,8 +216,9 @@ body.auth input{
 body.auth input::placeholder{color:rgba(226,232,240,0.45);}
 body.auth input:focus{border-color: rgba(59,130,246,0.75);box-shadow: 0 0 0 4px rgba(59,130,246,0.18);}
 
-.input-group{position:relative;display:flex;align-items:center;gap:10px;}
-.input-group input{padding-left:44px;}
+.input-group{position:relative;width:100%;}
+.input-group input{width:100%;padding-left:44px;padding-right:12px;}
+.input-group.has-action input{padding-right:58px;}
 .input-icon{position:absolute;left:12px;display:inline-flex;align-items:center;justify-content:center;color:rgba(226,232,240,0.55);}
 .input-group .icon-btn{position:absolute;right:8px;width:40px;height:40px;border-radius:12px;border-color: rgba(148,163,184,0.18);background: rgba(15,23,42,0.55);color:rgba(226,232,240,0.75);}
 .input-group .icon-btn:hover{background: rgba(30,41,59,0.72);border-color: rgba(148,163,184,0.28);}
