@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
         role: 'Admin',
     };
 
+    const LOGIN_STORAGE_KEY = 'inv_login_v1';
+
     initTheme();
 
     const page = (document.body?.dataset?.page || '').trim() || inferPageFromClass();
@@ -368,7 +370,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const emailEl = document.getElementById('email');
         const passwordEl = document.getElementById('password');
         const errorEl = document.getElementById('errorMessage');
+        const rememberEl = document.getElementById('rememberMe');
+        const togglePasswordEl = document.getElementById('togglePassword');
         if (!form || !emailEl || !passwordEl || !errorEl) return;
+
+        // restore remembered email
+        try {
+            const raw = localStorage.getItem(LOGIN_STORAGE_KEY);
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                const rememberedEmail = String(parsed?.email || '').trim();
+                const remembered = Boolean(parsed?.remember);
+                if (rememberedEmail) emailEl.value = rememberedEmail;
+                if (rememberEl) rememberEl.checked = remembered;
+            }
+        } catch {
+            // ignore
+        }
+
+        // password visibility toggle
+        togglePasswordEl?.addEventListener('click', () => {
+            const isPassword = passwordEl.getAttribute('type') !== 'text';
+            passwordEl.setAttribute('type', isPassword ? 'text' : 'password');
+            togglePasswordEl.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+        });
 
         form.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -383,6 +408,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             hideError(errorEl);
+
+            // remember-me
+            try {
+                const remember = Boolean(rememberEl?.checked);
+                localStorage.setItem(LOGIN_STORAGE_KEY, JSON.stringify({
+                    remember,
+                    email: remember ? email : '',
+                }));
+            } catch {
+                // ignore
+            }
 
             // store email into profile for convenience
             const profile = loadProfile();

@@ -3,46 +3,93 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Login - YesMart</title>
+  <title>Login - Enterprise Inventory</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body data-page="login">
-  <header class="topbar">
-    <div class="topbar-inner">
-      <a class="brand" href="index.html" aria-label="Home">
-        <img src="assets/images/logo.svg" alt="Logo" />
-        <strong>YesMart</strong>
-      </a>
-      <nav class="nav" aria-label="Navigation">
-        <a class="active" href="index.html">Login</a>
-      </nav>
-    </div>
-  </header>
-
-  <main class="container">
-    <section class="card card-animate form" aria-label="Login">
-      <h1 class="h1">Masuk</h1>
-      <p class="muted">Silakan masuk untuk mengakses dashboard.</p>
+<body data-page="login" class="auth">
+  <main class="auth-wrap" aria-label="Login">
+    <section class="auth-card" role="region" aria-label="Sign In">
+      <div class="auth-header">
+        <div class="auth-brand" aria-label="Brand">
+          <img src="assets/images/logo.svg" alt="Logo" />
+          <strong>Enterprise Inventory</strong>
+        </div>
+        <h1 class="auth-title">Sign In</h1>
+        <p class="auth-subtitle">Access your dashboard</p>
+      </div>
 
       <form id="loginForm" class="stack" novalidate>
         <div class="field">
-          <label for="email">Email</label>
-          <input id="email" name="email" type="email" autocomplete="username" placeholder="nama@contoh.com" required />
+          <label for="email">Email Address</label>
+          <div class="input-group">
+            <span class="input-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 6h16v12H4V6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <input id="email" name="email" type="email" autocomplete="username" placeholder="Email Address" required />
+          </div>
         </div>
 
         <div class="field">
           <label for="password">Password</label>
-          <input id="password" name="password" type="password" autocomplete="current-password" placeholder="••••••••" required />
+          <div class="input-group">
+            <span class="input-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 10V8a5 5 0 0 1 10 0v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M7 10h10v10H7V10Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Password" required />
+            <button id="togglePassword" class="icon-btn" type="button" aria-label="Show password" title="Show/Hide">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="currentColor" stroke-width="1.8"/>
+              </svg>
+            </button>
+          </div>
         </div>
 
         <p id="errorMessage" class="error" role="alert"></p>
 
-        <div class="actions">
-          <button class="btn primary" type="submit">Masuk</button>
-          <a class="btn" href="products.html">Produk</a>
+        <div class="auth-row">
+          <label class="check">
+            <input id="rememberMe" type="checkbox" />
+            <span>Remember me</span>
+          </label>
+          <a class="link" href="#" aria-label="Forgot password">Forgot Password?</a>
         </div>
 
-        <p class="hint">Gunakan email dengan format yang valid.</p>
+        <button class="btn primary auth-submit" type="submit">
+          <span class="btn-ico" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 17 15 12 10 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M4 12h11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M20 4v16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </span>
+          Login to Dashboard
+        </button>
+
+        <div class="divider" role="separator" aria-label="Or continue with">
+          <span>Or continue with</span>
+        </div>
+
+        <div class="grid cols-2 auth-social">
+          <button class="btn auth-social-btn" type="button">
+            <span class="btn-ico" aria-hidden="true">G</span>
+            Google
+          </button>
+          <button class="btn auth-social-btn" type="button">
+            <span class="btn-ico" aria-hidden="true">f</span>
+            Facebook
+          </button>
+        </div>
+
+        <p class="auth-footer">
+          Don’t have an account? <a class="link" href="#">Contact Administrator</a>
+        </p>
       </form>
     </section>
   </main>
