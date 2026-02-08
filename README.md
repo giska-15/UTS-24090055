@@ -92,7 +92,7 @@ Kalau mau jadi link demo:
 2. Source: **Deploy from a branch**
 3. Branch: `main` dan folder `/ (root)`
 4. Simpan, lalu tunggu link Pages muncul
-
+https://uts-24090055.vercel.app/
 ---
 
 ## Lisensi
